@@ -40,4 +40,6 @@ public class CustomIntentKey {
      * uCrop的裁剪输出路径Key
      */
     public static final String EXTRA_OUTPUT_URI = "com.yalantis.ucrop.OutputUri";
+
+    public static final String EXTRA_VIDEO_CUT_DURATION = "videoCutDuration";
 }

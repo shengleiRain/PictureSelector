@@ -57,6 +57,6 @@ public class VideoViewHolder extends BaseRecyclerMediaHolder {
     @Override
     public void bindData(LocalMedia media, int position) {
         super.bindData(media, position);
-        tvDuration.setText(DateUtils.formatDurationTime(media.getDuration()));
+        tvDuration.setText(DateUtils.formatDurationTime(media.getRealDuration()));
     }
 }

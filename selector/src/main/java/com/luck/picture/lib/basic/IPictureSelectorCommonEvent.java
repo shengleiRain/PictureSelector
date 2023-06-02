@@ -216,6 +216,14 @@ public interface IPictureSelectorCommonEvent {
     @Deprecated
     void onOldCompress(ArrayList<LocalMedia> result);
 
+    void onVideoCompress(ArrayList<LocalMedia> result);
+
+    void onEditVideo(Intent intent);
+
+    boolean checkVideoCompressValidity();
+
+    boolean checkEditVideoValidity();
+
     /**
      * 验证是否需要裁剪
      *

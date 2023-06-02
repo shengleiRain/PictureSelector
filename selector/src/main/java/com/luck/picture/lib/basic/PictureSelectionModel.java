@@ -17,9 +17,9 @@ import com.luck.picture.lib.R;
 import com.luck.picture.lib.animators.AnimationType;
 import com.luck.picture.lib.config.FileSizeUnit;
 import com.luck.picture.lib.config.PictureConfig;
-import com.luck.picture.lib.config.SelectorConfig;
 import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.config.SelectModeConfig;
+import com.luck.picture.lib.config.SelectorConfig;
 import com.luck.picture.lib.config.SelectorProviders;
 import com.luck.picture.lib.config.VideoQuality;
 import com.luck.picture.lib.engine.CompressEngine;
@@ -30,6 +30,8 @@ import com.luck.picture.lib.engine.ExtendLoaderEngine;
 import com.luck.picture.lib.engine.ImageEngine;
 import com.luck.picture.lib.engine.SandboxFileEngine;
 import com.luck.picture.lib.engine.UriToFileTransformEngine;
+import com.luck.picture.lib.engine.VideoCompressEngine;
+import com.luck.picture.lib.engine.VideoEditorEngine;
 import com.luck.picture.lib.engine.VideoPlayerEngine;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.entity.LocalMediaFolder;
@@ -49,9 +51,9 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.luck.picture.lib.interfaces.OnSelectAnimListener;
 import com.luck.picture.lib.interfaces.OnSelectFilterListener;
 import com.luck.picture.lib.interfaces.OnSelectLimitTipsListener;
+import com.luck.picture.lib.interfaces.OnVideoEditInterceptListener;
 import com.luck.picture.lib.interfaces.OnVideoThumbnailEventListener;
 import com.luck.picture.lib.language.LanguageConfig;
-import com.luck.picture.lib.manager.SelectedManager;
 import com.luck.picture.lib.style.PictureSelectorStyle;
 import com.luck.picture.lib.style.PictureWindowAnimationStyle;
 import com.luck.picture.lib.utils.DoubleUtils;
@@ -138,9 +140,10 @@ public final class PictureSelectionModel {
 
     /**
      * Set up player engine
-     *  <p>
-     *   Used to preview custom player instances，MediaPlayer by default
-     *  </p>
+     * <p>
+     * Used to preview custom player instances，MediaPlayer by default
+     * </p>
+     *
      * @param engine
      * @return
      */
@@ -153,7 +156,7 @@ public final class PictureSelectionModel {
      * Image Compress the engine
      *
      * @param engine Image Compress the engine
-     * Please use {@link CompressFileEngine}
+     *               Please use {@link CompressFileEngine}
      * @return
      */
     @Deprecated
@@ -179,7 +182,7 @@ public final class PictureSelectionModel {
      * Image Crop the engine
      *
      * @param engine Image Crop the engine
-     * Please Use {@link CropFileEngine}
+     *               Please Use {@link CropFileEngine}
      * @return
      */
     @Deprecated
@@ -201,12 +204,33 @@ public final class PictureSelectionModel {
     }
 
     /**
+     * Video Compress the engine
+     *
+     * @param engine video compress engine
+     * @return
+     */
+    public PictureSelectionModel setVideoCompressEngine(VideoCompressEngine engine) {
+        selectionConfig.videoCompressEngine = engine;
+        return this;
+    }
+
+    /**
+     * video editor engine
+     *
+     * @param engine Video Editor the engine
+     * @return
+     */
+    public PictureSelectionModel setVideoEditorEngine(VideoEditorEngine engine) {
+        selectionConfig.videoEditorEngine = engine;
+        return this;
+    }
+
+    /**
      * App Sandbox file path transform
      *
      * @param engine App Sandbox path transform
-     * Please Use {@link UriToFileTransformEngine}
+     *               Please Use {@link UriToFileTransformEngine}
      * @return
-     *
      */
     @Deprecated
     public PictureSelectionModel setSandboxFileEngine(SandboxFileEngine engine) {
@@ -343,6 +367,11 @@ public final class PictureSelectionModel {
         return this;
     }
 
+    public PictureSelectionModel setEditVideoInterceptListener(OnVideoEditInterceptListener listener) {
+        selectionConfig.onVideoEditInterceptListener = listener;
+        return this;
+    }
+
     /**
      * Custom interception permission processing
      *
@@ -366,7 +395,7 @@ public final class PictureSelectionModel {
     }
 
     /**
-     *  Permission denied
+     * Permission denied
      *
      * @param listener
      * @return

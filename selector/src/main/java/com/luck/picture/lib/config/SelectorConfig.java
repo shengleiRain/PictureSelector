@@ -13,6 +13,8 @@ import com.luck.picture.lib.engine.ExtendLoaderEngine;
 import com.luck.picture.lib.engine.ImageEngine;
 import com.luck.picture.lib.engine.SandboxFileEngine;
 import com.luck.picture.lib.engine.UriToFileTransformEngine;
+import com.luck.picture.lib.engine.VideoCompressEngine;
+import com.luck.picture.lib.engine.VideoEditorEngine;
 import com.luck.picture.lib.engine.VideoPlayerEngine;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.entity.LocalMediaFolder;
@@ -34,6 +36,7 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.luck.picture.lib.interfaces.OnSelectAnimListener;
 import com.luck.picture.lib.interfaces.OnSelectFilterListener;
 import com.luck.picture.lib.interfaces.OnSelectLimitTipsListener;
+import com.luck.picture.lib.interfaces.OnVideoEditInterceptListener;
 import com.luck.picture.lib.interfaces.OnVideoThumbnailEventListener;
 import com.luck.picture.lib.language.LanguageConfig;
 import com.luck.picture.lib.magical.BuildRecycleItemViewParams;
@@ -250,6 +253,8 @@ public final class SelectorConfig {
     public UriToFileTransformEngine uriToFileTransformEngine;
     public ExtendLoaderEngine loaderDataEngine;
     public VideoPlayerEngine videoPlayerEngine;
+    public VideoCompressEngine videoCompressEngine;
+    public VideoEditorEngine videoEditorEngine;
     public IBridgeViewLifecycle viewLifecycle;
     public IBridgeLoaderFactory loaderFactory;
     public InterpolatorFactory interpolatorFactory;
@@ -259,6 +264,7 @@ public final class SelectorConfig {
     public OnExternalPreviewEventListener onExternalPreviewEventListener;
     public OnInjectActivityPreviewListener onInjectActivityPreviewListener;
     public OnMediaEditInterceptListener onEditMediaEventListener;
+    public OnVideoEditInterceptListener onVideoEditInterceptListener;
     public OnPermissionsInterceptListener onPermissionsEventListener;
     public OnInjectLayoutResourceListener onLayoutResourceListener;
     public OnPreviewInterceptListener onPreviewInterceptListener;
@@ -289,6 +295,25 @@ public final class SelectorConfig {
 
     public int getSelectCount() {
         return selectedResult.size();
+    }
+    public int getSelectVideoCount() {
+        int count = 0;
+        for(LocalMedia media : getSelectedResult()) {
+            if (PictureMimeType.isHasVideo(media.getMimeType())) {
+                ++count;
+            }
+        }
+        return count;
+    }
+
+    public int getSelectImageCount() {
+        int count = 0;
+        for(LocalMedia media: getSelectedResult()) {
+            if (PictureMimeType.isHasImage(media.getMimeType())) {
+                ++count;
+            }
+        }
+        return count;
     }
 
     public void addSelectResult(LocalMedia media) {

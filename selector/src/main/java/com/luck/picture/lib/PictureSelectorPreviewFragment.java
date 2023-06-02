@@ -49,6 +49,7 @@ import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.config.SelectModeConfig;
+import com.luck.picture.lib.config.VideoCrop;
 import com.luck.picture.lib.decoration.HorizontalItemDecoration;
 import com.luck.picture.lib.decoration.WrapContentLinearLayoutManager;
 import com.luck.picture.lib.dialog.PictureCommonDialog;
@@ -178,14 +179,14 @@ public class PictureSelectorPreviewFragment extends PictureCommonFragment {
     /**
      * 内部预览
      *
-     * @param isBottomPreview 是否顶部预览进来的
-     * @param currentAlbum    当前预览的目录
-     * @param isShowCamera    是否有显示拍照图标
-     * @param position        预览下标
-     * @param totalNum        当前预览总数
-     * @param page            当前页码
-     * @param currentBucketId 当前相册目录id
-     * @param data            预览数据源
+     * @param isBottomPreview       是否顶部预览进来的
+     * @param currentAlbumName      当前预览的目录
+     * @param isShowCamera          是否有显示拍照图标
+     * @param position              预览下标
+     * @param totalNum              当前预览总数
+     * @param page                  当前页码
+     * @param currentBucketId       当前相册目录id
+     * @param data                  预览数据源
      */
     public void setInternalPreviewData(boolean isBottomPreview, String currentAlbumName, boolean isShowCamera,
                                        int position, int totalNum, int page, long currentBucketId,
@@ -1103,11 +1104,17 @@ public class PictureSelectorPreviewFragment extends PictureCommonFragment {
 
             @Override
             public void onEditImage() {
-                if (selectorConfig.onEditMediaEventListener != null) {
-                    LocalMedia media = mData.get(viewPager.getCurrentItem());
-                    selectorConfig.onEditMediaEventListener
-                            .onStartMediaEdit(PictureSelectorPreviewFragment.this, media,
-                                    Crop.REQUEST_EDIT_CROP);
+                LocalMedia media = mData.get(viewPager.getCurrentItem());
+                if (PictureMimeType.isHasImage(media.getMimeType())) {
+                    if (selectorConfig.onEditMediaEventListener != null) {
+                        selectorConfig.onEditMediaEventListener
+                                .onStartMediaEdit(PictureSelectorPreviewFragment.this, media,
+                                        Crop.REQUEST_EDIT_CROP);
+                    }
+                } else if (PictureMimeType.isHasVideo(media.getMimeType())) {
+                    if (selectorConfig.onVideoEditInterceptListener != null) {
+                        selectorConfig.onVideoEditInterceptListener.onStartMediaEdit(PictureSelectorPreviewFragment.this, media, cropVideoLauncher);
+                    }
                 }
             }
 
@@ -1161,8 +1168,7 @@ public class PictureSelectorPreviewFragment extends PictureCommonFragment {
             return;
         }
         LocalMedia media = data.get(curPosition);
-        bottomNarBar.isDisplayEditor(PictureMimeType.isHasVideo(media.getMimeType())
-                || PictureMimeType.isHasAudio(media.getMimeType()));
+        bottomNarBar.isDisplayEditor(PictureMimeType.isHasVideo(media.getMimeType()), PictureMimeType.isHasImage(media.getMimeType()));
         tvSelected.setSelected(selectorConfig.getSelectedResult().contains(data.get(viewPager.getCurrentItem())));
         viewPager.registerOnPageChangeCallback(pageChangeCallback);
         viewPager.setPageTransformer(new MarginPageTransformer(DensityUtil.dip2px(getAppContext(), 3)));
@@ -1455,8 +1461,7 @@ public class PictureSelectorPreviewFragment extends PictureCommonFragment {
                     }
                 }
                 notifyGallerySelectMedia(currentMedia);
-                bottomNarBar.isDisplayEditor(PictureMimeType.isHasVideo(currentMedia.getMimeType())
-                        || PictureMimeType.isHasAudio(currentMedia.getMimeType()));
+                bottomNarBar.isDisplayEditor(PictureMimeType.isHasVideo(currentMedia.getMimeType()), PictureMimeType.isHasImage(currentMedia.getMimeType()));
                 if (!isExternalPreview && !isInternalBottomPreview && !selectorConfig.isOnlySandboxDir) {
                     if (selectorConfig.isPageStrategy) {
                         if (isHasMore) {
@@ -1678,6 +1683,37 @@ public class PictureSelectorPreviewFragment extends PictureCommonFragment {
             viewPageAdapter.notifyItemChanged(viewPager.getCurrentItem());
             notifyGallerySelectMedia(currentMedia);
         }
+    }
+
+    @Override
+    public void onEditVideo(Intent data) {
+        if (mData.size() > viewPager.getCurrentItem()) {
+            LocalMedia currentMedia = mData.get(viewPager.getCurrentItem());
+            Uri output = VideoCrop.getOutput(data);
+            currentMedia.setCutPath(output != null ? output.getPath() : "");
+            currentMedia.setCut(!TextUtils.isEmpty(currentMedia.getCutPath()));
+            currentMedia.setCustomData(VideoCrop.getOutputCustomExtraData(data));
+            currentMedia.setEditorImage(currentMedia.isCut());
+            currentMedia.setSandboxPath(currentMedia.getCutPath());
+            currentMedia.setVideoCropDuration(VideoCrop.getOutputDuration(data));
+            if (selectorConfig.getSelectedResult().contains(currentMedia)) {
+                LocalMedia exitsMedia = currentMedia.getCompareLocalMedia();
+                if (exitsMedia != null) {
+                    exitsMedia.setCutPath(currentMedia.getCutPath());
+                    exitsMedia.setCut(currentMedia.isCut());
+                    exitsMedia.setEditorImage(currentMedia.isEditorImage());
+                    exitsMedia.setCustomData(currentMedia.getCustomData());
+                    exitsMedia.setSandboxPath(currentMedia.getCutPath());
+                    exitsMedia.setVideoCropDuration(currentMedia.getVideoCropDuration());
+                }
+                sendFixedSelectedChangeEvent(currentMedia);
+            } else {
+                confirmSelect(currentMedia, false);
+            }
+            viewPageAdapter.notifyItemChanged(viewPager.getCurrentItem());
+            notifyGallerySelectMedia(currentMedia);
+        }
+
     }
 
     @Override

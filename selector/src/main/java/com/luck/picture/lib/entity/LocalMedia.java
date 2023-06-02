@@ -199,6 +199,11 @@ public class LocalMedia implements Parcelable {
      */
     private boolean isEditorImage;
 
+    /**
+     * the video duration after crop
+     */
+    private long videoCropDuration;
+
     public LocalMedia() {
     }
 
@@ -238,6 +243,7 @@ public class LocalMedia implements Parcelable {
         isMaxSelectEnabledMask = in.readByte() != 0;
         isGalleryEnabledMask = in.readByte() != 0;
         isEditorImage = in.readByte() != 0;
+        videoCropDuration = in.readLong();
     }
 
     @Override
@@ -277,6 +283,7 @@ public class LocalMedia implements Parcelable {
         dest.writeByte((byte) (isMaxSelectEnabledMask ? 1 : 0));
         dest.writeByte((byte) (isGalleryEnabledMask ? 1 : 0));
         dest.writeByte((byte) (isEditorImage ? 1 : 0));
+        dest.writeLong(videoCropDuration);
     }
 
     @Override
@@ -509,6 +516,13 @@ public class LocalMedia implements Parcelable {
         return duration;
     }
 
+    public long getRealDuration() {
+        if (isCut() && videoCropDuration != 0L) {
+            return videoCropDuration;
+        }
+        return duration;
+    }
+
     public void setDuration(long duration) {
         this.duration = duration;
     }
@@ -735,6 +749,14 @@ public class LocalMedia implements Parcelable {
 
     public void setVideoThumbnailPath(String videoThumbnailPath) {
         this.videoThumbnailPath = videoThumbnailPath;
+    }
+
+    public void setVideoCropDuration(long videoCropDuration) {
+        this.videoCropDuration = videoCropDuration;
+    }
+
+    public long getVideoCropDuration() {
+        return videoCropDuration;
     }
 
     /**

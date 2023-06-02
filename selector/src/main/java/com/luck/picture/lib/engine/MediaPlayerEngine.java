@@ -2,6 +2,7 @@ package com.luck.picture.lib.engine;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.view.View;
 
 import com.luck.picture.lib.config.PictureMimeType;
@@ -38,6 +39,18 @@ public class MediaPlayerEngine implements VideoPlayerEngine<MediaPlayerView> {
         SelectorConfig config = SelectorProviders.getInstance().getSelectorConfig();
         mediaPlayer.setLooping(config.isLoopAutoPlay);
         player.start(availablePath);
+    }
+
+    public void onStartPlayer(MediaPlayerView player, Uri videoUri) {
+        MediaPlayer mediaPlayer = player.getMediaPlayer();
+        SelectorConfig config = SelectorProviders.getInstance().getSelectorConfig();
+        mediaPlayer.setLooping(config.isLoopAutoPlay);
+        try {
+            mediaPlayer.setDataSource(player.getContext(), videoUri);
+            mediaPlayer.prepareAsync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
