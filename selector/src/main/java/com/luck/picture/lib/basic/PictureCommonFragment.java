@@ -43,7 +43,6 @@ import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.config.SelectModeConfig;
 import com.luck.picture.lib.config.SelectorConfig;
 import com.luck.picture.lib.config.SelectorProviders;
-import com.luck.picture.lib.config.VideoCrop;
 import com.luck.picture.lib.dialog.PhotoItemSelectedDialog;
 import com.luck.picture.lib.dialog.PictureLoadingDialog;
 import com.luck.picture.lib.dialog.RemindDialog;
@@ -649,7 +648,7 @@ public abstract class PictureCommonFragment extends Fragment implements IPicture
         if (PictureMimeType.isHasVideo(curMimeType)) {
             if (selectorConfig.selectionMode == SelectModeConfig.MULTIPLE) {
                 selectorConfig.maxVideoSelectNum = selectorConfig.maxVideoSelectNum > 0 ? selectorConfig.maxVideoSelectNum : selectorConfig.maxSelectNum;
-                if (!isSelected && selectorConfig.getSelectCount() >= selectorConfig.maxVideoSelectNum) {
+                if (!isSelected && selectorConfig.getSelectVideoCount() >= selectorConfig.maxVideoSelectNum) {
                     // 如果先选择的是视频
                     if (selectorConfig.onSelectLimitTipsListener != null) {
                         boolean isSelectLimit = selectorConfig.onSelectLimitTipsListener

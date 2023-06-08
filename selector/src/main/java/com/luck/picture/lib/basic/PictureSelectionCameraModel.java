@@ -13,9 +13,9 @@ import androidx.fragment.app.FragmentManager;
 import com.luck.picture.lib.PictureOnlyCameraFragment;
 import com.luck.picture.lib.R;
 import com.luck.picture.lib.config.FileSizeUnit;
-import com.luck.picture.lib.config.SelectorConfig;
 import com.luck.picture.lib.config.SelectMimeType;
 import com.luck.picture.lib.config.SelectModeConfig;
+import com.luck.picture.lib.config.SelectorConfig;
 import com.luck.picture.lib.config.SelectorProviders;
 import com.luck.picture.lib.config.VideoQuality;
 import com.luck.picture.lib.engine.CompressEngine;
@@ -36,7 +36,6 @@ import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.luck.picture.lib.interfaces.OnSelectLimitTipsListener;
 import com.luck.picture.lib.interfaces.OnVideoThumbnailEventListener;
 import com.luck.picture.lib.language.LanguageConfig;
-import com.luck.picture.lib.manager.SelectedManager;
 import com.luck.picture.lib.utils.DoubleUtils;
 import com.luck.picture.lib.utils.SdkVersionUtils;
 
@@ -371,7 +370,7 @@ public final class PictureSelectionCameraModel {
      * @param maxVideoSelectNum PictureSelector video max selection
      */
     public PictureSelectionCameraModel setMaxVideoSelectNum(int maxVideoSelectNum) {
-        selectionConfig.maxVideoSelectNum = selectionConfig.chooseMode == SelectMimeType.ofVideo() ? 0 : maxVideoSelectNum;
+        selectionConfig.maxVideoSelectNum = maxVideoSelectNum;
         return this;
     }
 

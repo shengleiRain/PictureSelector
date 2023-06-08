@@ -296,9 +296,10 @@ public final class SelectorConfig {
     public int getSelectCount() {
         return selectedResult.size();
     }
+
     public int getSelectVideoCount() {
         int count = 0;
-        for(LocalMedia media : getSelectedResult()) {
+        for (LocalMedia media : getSelectedResult()) {
             if (PictureMimeType.isHasVideo(media.getMimeType())) {
                 ++count;
             }
@@ -308,7 +309,7 @@ public final class SelectorConfig {
 
     public int getSelectImageCount() {
         int count = 0;
-        for(LocalMedia media: getSelectedResult()) {
+        for (LocalMedia media : getSelectedResult()) {
             if (PictureMimeType.isHasImage(media.getMimeType())) {
                 ++count;
             }
@@ -325,6 +326,13 @@ public final class SelectorConfig {
     }
 
     public String getResultFirstMimeType() {
+        if (chooseMode == SelectMimeType.ofImage()) {
+            return "image/*";
+        } else if (chooseMode == SelectMimeType.ofVideo()) {
+            return "video/*";
+        } else if (chooseMode == SelectMimeType.ofAudio()) {
+            return "audio/*";
+        }
         return selectedResult.size() > 0 ? selectedResult.get(0).getMimeType() : "";
     }
 

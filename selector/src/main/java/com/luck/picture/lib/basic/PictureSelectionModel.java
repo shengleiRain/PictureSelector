@@ -872,7 +872,7 @@ public final class PictureSelectionModel {
      * @return
      */
     public PictureSelectionModel setMaxVideoSelectNum(int maxVideoSelectNum) {
-        selectionConfig.maxVideoSelectNum = selectionConfig.chooseMode == SelectMimeType.ofVideo() ? 0 : maxVideoSelectNum;
+        selectionConfig.maxVideoSelectNum = maxVideoSelectNum;
         return this;
     }
 
